@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generate Admin Credentials - Photo Gallery</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .container {
+            background: white;
+            border-radius: 1rem;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            padding: 3rem;
+            width: 100%;
+            max-width: 600px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .logo {
+            width: 64px;
+            height: 64px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+        }
+
+        .logo svg {
+            width: 32px;
+            height: 32px;
+            color: white;
+        }
+
+        h1 {
+            font-size: 1.875rem;
+            color: #1a202c;
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            color: #718096;
+            font-size: 0.875rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            font-weight: 500;
+            color: #2d3748;
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        button {
+            width: 100%;
+            padding: 0.875rem;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.2);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .result {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: #f7fafc;
+            border-radius: 0.5rem;
+            border: 1px solid #e2e8f0;
+            display: none;
+        }
+
+        .result.show {
+            display: block;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .result-title {
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .result-title svg {
+            color: #48bb78;
+        }
+
+        .code-block {
+            background: #2d3748;
+            color: #f7fafc;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 0.875rem;
+            margin-bottom: 1rem;
+            position: relative;
+            word-break: break-all;
+        }
+
+        .code-label {
+            color: #a0aec0;
+            font-size: 0.75rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .code-value {
+            color: #68d391;
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            padding: 0.25rem 0.5rem;
+            background: #4a5568;
+            color: white;
+            border: none;
+            border-radius: 0.25rem;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .copy-btn:hover {
+            background: #718096;
+        }
+
+        .copy-btn.copied {
+            background: #48bb78;
+        }
+
+        .instructions {
+            background: #fef5e7;
+            border: 1px solid #f6d55c;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-top: 1rem;
+        }
+
+        .instructions-title {
+            font-weight: 600;
+            color: #744210;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .instructions-list {
+            color: #744210;
+            font-size: 0.875rem;
+            margin-left: 1.5rem;
+            line-height: 1.6;
+        }
+
+        .divider {
+            height: 1px;
+            background: #e2e8f0;
+            margin: 2rem 0;
+        }
+
+        .back-link {
+            text-align: center;
+            margin-top: 1.5rem;
+        }
+
+        .back-link a {
+            color: #667eea;
+            text-decoration: none;
+            font-size: 0.875rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            transition: color 0.2s;
+        }
+
+        .back-link a:hover {
+            color: #5a67d8;
+        }
+
+        .warning {
+            background: #fff5f5;
+            border: 1px solid #feb2b2;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            color: #c53030;
+            font-size: 0.875rem;
+            display: flex;
+            align-items: start;
+            gap: 0.5rem;
+        }
+
+        .warning svg {
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                </svg>
+            </div>
+            <h1>Generate Admin Credentials</h1>
+            <p class="subtitle">Create secure double SHA-256 hashed credentials for your photo gallery admin panel</p>
+        </div>
+
+        <div class="warning">
+            <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                      d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+            </svg>
+            <div>
+                <strong>Important:</strong> Never share your actual password with anyone. Only the generated hash should be placed in the code.
+            </div>
+        </div>
+
+        <form id="hashForm">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" placeholder="Enter your admin username" required>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" placeholder="Enter your admin password" required>
+            </div>
+
+            <button type="submit">Generate Secure Hash</button>
+        </form>
+
+        <div class="result" id="result">
+            <div class="result-title">
+                <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                Credentials Generated Successfully!
+            </div>
+
+            <div class="code-block">
+                <div class="code-label">// Copy this entire block to js/auth.js</div>
+                <div id="codeOutput"></div>
+                <button class="copy-btn" onclick="copyCode()">Copy</button>
+            </div>
+
+            <div class="instructions">
+                <div class="instructions-title">
+                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    How to use:
+                </div>
+                <ol class="instructions-list">
+                    <li>Open the file <strong>js/auth.js</strong> in your code editor</li>
+                    <li>Find the <strong>credentials</strong> object (around line 8-10)</li>
+                    <li>Replace it with the code block above</li>
+                    <li>Save the file</li>
+                    <li>Your admin panel is now secured with your new credentials!</li>
+                </ol>
+            </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="back-link">
+            <a href="index.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                          d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                </svg>
+                Back to Gallery
+            </a>
+        </div>
+    </div>
+
+    <script>
+        async function sha256(message) {
+            const msgBuffer = new TextEncoder().encode(message);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+            return hashHex;
+        }
+
+        async function generateDoubleHash(password) {
+            const firstHash = await sha256(password);
+            const secondHash = await sha256(firstHash);
+            return secondHash;
+        }
+
+        document.getElementById('hashForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            if (!username || !password) {
+                alert('Please enter both username and password');
+                return;
+            }
+
+            // Generate the hash
+            const hash = await generateDoubleHash(password);
+
+            // Create the code output
+            const codeOutput = `this.credentials = {
+    username: '${username}',
+    passwordHash: '${hash}' // Double SHA-256 hash
+};`;
+
+            // Display the result
+            document.getElementById('codeOutput').innerHTML = `<pre style="margin: 0; color: #68d391;">${codeOutput}</pre>`;
+            document.getElementById('result').classList.add('show');
+
+            // Scroll to result
+            document.getElementById('result').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        });
+
+        function copyCode() {
+            const codeText = document.getElementById('codeOutput').textContent;
+            navigator.clipboard.writeText(codeText).then(function() {
+                const btn = document.querySelector('.copy-btn');
+                btn.textContent = 'Copied!';
+                btn.classList.add('copied');
+
+                setTimeout(() => {
+                    btn.textContent = 'Copy';
+                    btn.classList.remove('copied');
+                }, 2000);
+            }).catch(function(err) {
+                alert('Failed to copy. Please select and copy manually.');
+            });
+        }
+
+        // Show password toggle
+        document.getElementById('password').addEventListener('focus', function() {
+            this.type = 'text';
+        });
+
+        document.getElementById('password').addEventListener('blur', function() {
+            this.type = 'password';
+        });
+    </script>
+</body>
+</html>
